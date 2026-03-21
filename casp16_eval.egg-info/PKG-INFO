@@ -1,3 +1,16 @@
+Metadata-Version: 2.4
+Name: casp16_eval
+Version: 0.1.0
+Summary: Python toolkit for replicating the CASP16 nucleic acid structure prediction assessment
+License: MIT
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy>=1.24
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Dynamic: license-file
+
 # CASP16 Nucleic Acid Evaluation Pipeline
 
 A Python toolkit for replicating the CASP16 assessment of nucleic acid
