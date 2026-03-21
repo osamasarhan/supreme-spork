@@ -20,6 +20,7 @@ RNA Multimers / NA-Protein targets
       + 0.7·(⅓·Z_ICS  + ⅓·Z_IPS  + ⅓·Z_i-lDDT)
 """
 
+import numpy as np
 from typing import List, Sequence
 
 
@@ -48,29 +49,27 @@ def calculate_z_scores(scores: Sequence[float]) -> List[float]:
     >>> calculate_z_scores([0.9, 0.8, 0.7, 0.1])
     [0.707..., 0.0, -0.707..., -2.828...]
     """
-    import statistics
+    arr = np.array(scores, dtype=float)
+    if arr.size < 2:
+        return [0.0] * arr.size
 
-    scores = list(scores)
-    if len(scores) < 2:
-        return [0.0] * len(scores)
-
-    mean_val = statistics.mean(scores)
-    std_val = statistics.pstdev(scores)  # population std for initial filter
+    mean_val = np.mean(arr)
+    std_val = np.std(arr)  # population std (ddof=0) for initial outlier filter
 
     # Remove outliers (> 2 std dev below the mean)
     threshold = mean_val - 2.0 * std_val
-    filtered = [s for s in scores if s > threshold]
+    filtered = arr[arr > threshold]
 
-    if len(filtered) < 2:
-        return [0.0] * len(scores)
+    if filtered.size < 2:
+        return [0.0] * arr.size
 
-    final_mean = statistics.mean(filtered)
-    final_std = statistics.pstdev(filtered)
+    final_mean = np.mean(filtered)
+    final_std = np.std(filtered)
 
     if final_std == 0.0:
-        return [0.0] * len(scores)
+        return [0.0] * arr.size
 
-    return [(s - final_mean) / final_std for s in scores]
+    return list((arr - final_mean) / final_std)
 
 
 def compute_na_monomer_ranking(
